@@ -29,18 +29,21 @@ Message: ${message}`;
 }
 
 export default function Contact() {
-  const [sent, setSent] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   function handleWhatsAppInquiry(event) {
-    const formData = new FormData(event.currentTarget.form);
+    const form = event.currentTarget.form;
+    const formData = new FormData(form);
     sendWhatsAppInquiry(
       formData.get("fullName") || "",
       formData.get("phone") || "",
       formData.get("inquiryType") || "",
       formData.get("message") || "",
     );
+    setSuccessMessage("Your inquiry is ready to send in WhatsApp. Thank you for contacting us!");
+    form.reset();
   }
 
   async function submitInquiry(event) {
@@ -58,7 +61,7 @@ export default function Contact() {
         phone: values.phone,
         message: values.message,
       });
-      setSent(true);
+      setSuccessMessage("Your inquiry has been sent to our guest experience team. We will be in touch shortly.");
       form.reset();
     } catch (submissionError) {
       setError(submissionError.message);
@@ -81,12 +84,12 @@ export default function Contact() {
         </div>
 
         <form className="contact-form reveal" onSubmit={submitInquiry}>
-            {sent && (
+            {successMessage && (
               <div className="contact-success-message" role="status" aria-live="polite">
                 <CheckCircle2 size={24} strokeWidth={1.8} />
                 <div>
-                  <h3>Thank You For Reaching Out</h3>
-                  <p>Your inquiry has been sent to our guest experience team. We will be in touch shortly.</p>
+                  <h3>Thank You For Contacting Us</h3>
+                  <p>{successMessage}</p>
                 </div>
               </div>
             )}
